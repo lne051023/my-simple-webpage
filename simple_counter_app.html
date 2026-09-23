@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple & Elegant Counter</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+        .counter-number {
+            transition: transform 0.15s ease, color 0.3s ease;
+        }
+        .bump-up {
+            transform: scale(1.15) translateY(-5px);
+        }
+        .bump-down {
+            transform: scale(0.85) translateY(5px);
+        }
+        .btn-press {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-press:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
+
+    <main class="w-full max-w-md bg-slate-800/80 backdrop-blur-md border border-slate-700/60 rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden">
+        
+        <!-- Top Header & Controls -->
+        <header class="w-full flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-calculator text-white text-sm"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-slate-100">Counter</h1>
+            </div>
+            
+            <button id="reset-btn" title="Reset Counter (R)" class="btn-press flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-700/60 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600/40 transition">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Reset</span>
+            </button>
+        </header>
+
+        <!-- Main Display Card -->
+        <div class="w-full bg-slate-950/60 rounded-2xl border border-slate-800/80 p-8 mb-6 flex flex-col items-center justify-center relative shadow-inner">
+            <span id="counter-value" class="counter-number text-7xl md:text-8xl font-black tracking-tight text-indigo-400 my-2">0</span>
+            
+            <!-- Quick Session Metrics -->
+            <div class="flex items-center space-x-6 mt-4 text-xs font-medium text-slate-400 border-t border-slate-800/80 pt-3 w-full justify-around">
+                <div class="text-center">
+                    <span class="block text-slate-500 text-[10px] uppercase tracking-wider">Min</span>
+                    <span id="min-val" class="font-semibold text-slate-300">0</span>
+                </div>
+                <div class="text-center">
+                    <span class="block text-slate-500 text-[10px] uppercase tracking-wider">Max</span>
+                    <span id="max-val" class="font-semibold text-slate-300">0</span>
+                </div>
+                <div class="text-center">
+                    <span class="block text-slate-500 text-[10px] uppercase tracking-wider">Clicks</span>
+                    <span id="clicks-val" class="font-semibold text-slate-300">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step Size Selector -->
+        <div class="w-full flex items-center justify-between mb-6 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800/60">
+            <span class="text-xs font-medium text-slate-400 pl-3">Step:</span>
+            <div class="flex space-x-1">
+                <button data-step="1" class="step-btn active px-3 py-1 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow">1</button>
+                <button data-step="5" class="step-btn px-3 py-1 text-xs font-bold rounded-xl transition bg-transparent text-slate-400 hover:text-white hover:bg-slate-800">5</button>
+                <button data-step="10" class="step-btn px-3 py-1 text-xs font-bold rounded-xl transition bg-transparent text-slate-400 hover:text-white hover:bg-slate-800">10</button>
+                <button data-step="100" class="step-btn px-3 py-1 text-xs font-bold rounded-xl transition bg-transparent text-slate-400 hover:text-white hover:bg-slate-800">100</button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 gap-4 w-full">
+            <button id="decrement-btn" class="btn-press py-5 rounded-2xl bg-slate-700/50 hover:bg-red-500/20 hover:border-red-500/40 border border-slate-600/50 text-slate-200 hover:text-red-400 flex items-center justify-center space-x-2 text-2xl font-bold shadow-lg transition group">
+                <i class="fa-solid fa-minus transition-transform group-hover:scale-125"></i>
+            </button>
+            <button id="increment-btn" class="btn-press py-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center space-x-2 text-2xl font-bold shadow-lg shadow-indigo-600/30 transition group">
+                <i class="fa-solid fa-plus transition-transform group-hover:scale-125"></i>
+            </button>
+        </div>
+
+        <!-- Keyboard Shortcuts Info -->
+        <footer class="mt-6 text-center text-[11px] text-slate-500 flex items-center justify-center space-x-3">
+            <span><kbd class="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600 text-[10px]">↑</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600 text-[10px]">+</kbd> Add</span>
+            <span><kbd class="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600 text-[10px]">↓</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600 text-[10px]">-</kbd> Subtract</span>
+            <span><kbd class="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600 text-[10px]">R</kbd> Reset</span>
+        </footer>
+    </main>
+
+    <!-- App Scripting -->
+    <script>
+        let count = 0;
+        let step = 1;
+        let minVal = 0;
+        let maxVal = 0;
+        let totalClicks = 0;
+
+        const counterValueEl = document.getElementById('counter-value');
+        const minValEl = document.getElementById('min-val');
+        const maxValEl = document.getElementById('max-val');
+        const clicksValEl = document.getElementById('clicks-val');
+        
+        const incrementBtn = document.getElementById('increment-btn');
+        const decrementBtn = document.getElementById('decrement-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const stepBtns = document.querySelectorAll('.step-btn');
+
+        function updateDisplay(animationClass) {
+            counterValueEl.textContent = count;
+            minValEl.textContent = minVal;
+            maxValEl.textContent = maxVal;
+            clicksValEl.textContent = totalClicks;
+
+            // Color indicator feedback based on sign
+            if (count > 0) {
+                counterValueEl.className = "counter-number text-7xl md:text-8xl font-black tracking-tight text-emerald-400 my-2";
+            } else if (count < 0) {
+                counterValueEl.className = "counter-number text-7xl md:text-8xl font-black tracking-tight text-rose-400 my-2";
+            } else {
+                counterValueEl.className = "counter-number text-7xl md:text-8xl font-black tracking-tight text-indigo-400 my-2";
+            }
+
+            // Trigger quick pop animation
+            if (animationClass) {
+                counterValueEl.classList.add(animationClass);
+                setTimeout(() => {
+                    counterValueEl.classList.remove(animationClass);
+                }, 150);
+            }
+        }
+
+        function increment() {
+            count += step;
+            totalClicks++;
+            if (count > maxVal) maxVal = count;
+            updateDisplay('bump-up');
+        }
+
+        function decrement() {
+            count -= step;
+            totalClicks++;
+            if (count < minVal) minVal = count;
+            updateDisplay('bump-down');
+        }
+
+        function reset() {
+            count = 0;
+            minVal = 0;
+            maxVal = 0;
+            totalClicks = 0;
+            updateDisplay('bump-down');
+        }
+
+        incrementBtn.addEventListener('click', increment);
+        decrementBtn.addEventListener('click', decrement);
+        resetBtn.addEventListener('click', reset);
+
+        // Step buttons listener
+        stepBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                stepBtns.forEach(b => {
+                    b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+                    b.classList.add('bg-transparent', 'text-slate-400');
+                });
+                btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
+                btn.classList.remove('bg-transparent', 'text-slate-400');
+                step = parseInt(btn.getAttribute('data-step'), 10);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === '+') {
+                e.preventDefault();
+                increment();
+            } else if (e.key === 'ArrowDown' || e.key === '-') {
+                e.preventDefault();
+                decrement();
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                reset();
+            }
+        });
+
+        // Initial setup
+        updateDisplay();
+    </script>
+</body>
+</html>
